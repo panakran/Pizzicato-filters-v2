@@ -1,0 +1,7 @@
+<h1 ng-bind="vmController.filterData.name">
+</h1>
+<div ng-repeat="filter in vmController.filterData.props track by $index">
+    <filter-attr max="filter.max" min="filter.min" value="filter.defaults" name="filter.name">
+    </filter-attr>
+    {{filter.defaults}}
+</div>
