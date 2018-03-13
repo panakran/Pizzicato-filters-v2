@@ -23,10 +23,17 @@
     </head>
     <body ng-app="MainModule">
         <div ng-controller="MainModuleCtrl">
+            <div class=" row">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-primary" ng-click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
+                    <button class="btn btn-primary" ng-click="togglePlay()"><span class="" ng-class="{'glyphicon glyphicon-play': playStatus , 'glyphicon glyphicon-pause': !playStatus} "></span></button>
+                    <button type="button" ng-repeat="filter in filters" class="btn btn-primary" ng-click="addFilter(filter)">{{filter.name| lowercase}}</button>
+                </div>
+            </div>
             <button ng-click="loadSong()">load song</button>
             <ui-knob value="volume" options="options"></ui-knob>
-                <filter ng-repeat="filterToApply in filtersApplied" filter-data="filterToApply">
-                </filter>
+            <filter ng-repeat="filterToApply in filtersApplied" filter-data="filterToApply" ng-click="removeFilter(filterToApply)">
+            </filter>
             Model::{{filtersApplied}}
             Model::{{filtersApplied[0].props[0].defaults}}
         </div>

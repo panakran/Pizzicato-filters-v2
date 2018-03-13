@@ -2,6 +2,7 @@ angular.module('MainModule', ['ui.knob', 'common-services', 'filterModule', 'fil
         controller('MainModuleCtrl', function ($scope, fetchKnobVolumeConstants, fetchFilterConstants) {
             $scope.fil = [];
             $scope.fil2 = [];
+            $scope.playStatus = false;
 
             $scope.loadSong = function () {
                 $scope.songFile =
@@ -24,9 +25,36 @@ angular.module('MainModule', ['ui.knob', 'common-services', 'filterModule', 'fil
             $scope.$watch('volume', function (newVolume) {
                 $scope.songFile.volume = newVolume / 100;
             });
+            $scope.addFilter = function (filter) {
+                console.log("filter to apply", filter);
+                var tempFilterClass = new filter.class;
+                $scope.fil2.push(tempFilterClass);
+                $scope.filtersApplied.push(filter);
+                $scope.songFile.addEffect($scope.fil2[$scope.fil2.indexOf(tempFilterClass)]);
+                
+                console.log("filter to apply", $scope.filtersApplied);
+            };
+            $scope.removeFilter = function (filter) {
+//                $scope.songFile.removeEffect
+                console.log("REMOVE", filter);
+            };
+            $scope.togglePlay = function () {
+
+                if ($scope.playStatus) {
+                    $scope.songFile.play();
+                } else {
+                    $scope.songFile.pause();
+                }
+                $scope.playStatus = !$scope.playStatus;
+            };
+            $scope.stop = function () {
+                $scope.songFile.stop();
+                $scope.playStatus = true;
+            };
             $scope.$watch('filtersApplied', function (newVolume) {
-                angular.forEach(newVolume, function (value1, index) {
-                    angular.forEach(value1.props, function (value2) {
+                 console.log("WATCHER", newVolume);
+                newVolume.forEach(function (value1, index) {
+                    value1.props.forEach(function (value2) {
                         $scope.fil2[index][value2.name] = parseFloat(value2.defaults);
                     });
                 });
@@ -37,7 +65,8 @@ angular.module('MainModule', ['ui.knob', 'common-services', 'filterModule', 'fil
             fetchFilterConstants.then(function (data) {
 
                 $scope.filters = data;
-                $scope.filtersApplied = [$scope.filters[3], $scope.filters[1]];
+                console.log($scope.filters);
+                $scope.filtersApplied = [];
             }, function () {
 
             });
