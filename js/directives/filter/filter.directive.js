@@ -12,7 +12,7 @@
             controllerAs: "vmController",
             bindToController: true,
             restrict: 'E',
-            scope: {filterData: '='},
+            scope: {filterData: '=', remove:'='},
             link: linkFunction()
         };
     }
@@ -43,6 +43,7 @@
     function filterController($scope, fetchKnobFilterConstants) {
         var vm = this;
         console.log('vm::',vm);
+        
     }
 
 })();

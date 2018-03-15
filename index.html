@@ -22,20 +22,18 @@
         <script src="./js/directives/filter-attributes/filter.attr.directive.js" ></script>
     </head>
     <body ng-app="MainModule">
-        <div ng-controller="MainModuleCtrl">
+        <div ng-controller="MainModuleCtrl as vm">
             <div class=" row">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-primary" ng-click="stop()"><span class="glyphicon glyphicon-stop"></span></button>
-                    <button class="btn btn-primary" ng-click="togglePlay()"><span class="" ng-class="{'glyphicon glyphicon-play': playStatus , 'glyphicon glyphicon-pause': !playStatus} "></span></button>
-                    <button type="button" ng-repeat="filter in filters" class="btn btn-primary" ng-click="addFilter(filter)">{{filter.name| lowercase}}</button>
+                    <button type="button" class="btn btn-primary" ng-click="vm.stop()"><span class="glyphicon glyphicon-stop"></span></button>
+                    <button class="btn btn-primary" ng-click="vm.togglePlay()"><span class="" ng-class="{'glyphicon glyphicon-play': vm.playStatus , 'glyphicon glyphicon-pause': !vm.playStatus} "></span></button>
+                    <button type="button" ng-repeat="filter in vm.filters" class="btn btn-primary" ng-click="vm.addFilter(filter)">{{filter.name| lowercase}}</button>
                 </div>
             </div>
-            <button ng-click="loadSong()">load song</button>
-            <ui-knob value="volume" options="options"></ui-knob>
-            <filter ng-repeat="filterToApply in filtersApplied" filter-data="filterToApply" ng-click="removeFilter(filterToApply)">
+            <button ng-click="vm.loadSong()">load song</button>
+            <ui-knob value="vm.volume" options="vm.options"></ui-knob>
+            <filter ng-repeat="filterToApply in vm.filtersApplied" filter-data="filterToApply" remove="vm.removeFilter(d)">
             </filter>
-            Model::{{filtersApplied}}
-            Model::{{filtersApplied[0].props[0].defaults}}
         </div>
     </body>
 </html>
