@@ -1,81 +1,167 @@
-angular.module('MainModule', ['ui.knob', 'common-services', 'filterModule', 'filterAttrModule']).
-        controller('MainModuleCtrl', function ($scope, fetchKnobVolumeConstants, fetchFilterConstants) {
-            var vm = this;
-            vm.fil = [];
-            vm.filtersApplied = [];
-            vm.playStatus = false;
-            vm.loadSong = loadSong;
-            vm.addFilter = addFilter;
-            vm.removeFilter = removeFilter;
-            vm.togglePlay = togglePlay;
-            vm.stop = stop;
-            $scope.$watch('vm.volume', watcherVolume);
-            $scope.$watch('vm.filtersApplied', wathcerFiltersApplied, true);
+(function () {
+    'use strict';
 
-            function watcherVolume(newVolume) {
-                if (vm.songFile !== undefined)
-                    vm.songFile.volume = newVolume / 100;
+
+    angular.module('MainModule', ['ui.knob', 'common-services', 'filterModule', 'filterAttrModule', 'ngProgress', 'common-filters']).
+            controller('MainModuleCtrl', MainModuleCtrl);
+
+    MainModuleCtrl.$inject = ['$scope', 'fetchConstants', 'pizzicatoFilterService', 'ngProgressFactory', '$interval'];
+    function MainModuleCtrl($scope, fetchConstants, pizzicatoFilterService, ngProgressFactory, $interval) {
+
+        var vm = this;
+
+        /**
+         * Ctrl variables
+         */
+        vm.filtersApplied = [];
+        vm.playStatus = true;
+        vm.volume = 65;
+        vm.options = fetchConstants.knobVolume();
+        vm.songLoaded = false;
+
+        /**
+         * Ctrl Functions
+         */
+        vm.loadSong = loadSong;
+        vm.addFilter = addFilter;
+        vm.removeFilter = removeFilter;
+        vm.togglePlay = togglePlay;
+        vm.stop = stop;
+        vm.initConstants = initConstants;
+
+        /**
+         * Ctrl watchers
+         */
+        $scope.$watch('vm.volume', watcherVolume);
+        $scope.$watch('vm.filtersApplied', watcherFiltersApplied, true);
+
+        /**
+         * Run on start up
+         */
+        //////////////
+        vm.stopCounter = stopCounter;
+        vm.startCounter = startCounter;
+
+        // simulated items array
+        var promise;
+        // starts the interval
+        function startCounter() {
+            // stops any running interval to avoid two intervals running at the same time
+            vm.stopCounter();
+            // store the interval promise
+            promise =
+                    $interval(function () {
+//                        console.log(vm.songFile);
+                        vm.progressbar.set(
+                                100-(vm.counter/vm.songFile.sourceNode.buffer.duration)*100
+                                );
+                        vm.counter--;
+                    }, 1000);
+        }
+        
+
+        // stops the interval
+        function stopCounter() {
+            $interval.cancel(promise);
+        }
+        
+
+        // starting the interval by default
+
+
+        // stops the interval when the scope is destroyed,
+        // this usually happens when a route is changed and 
+        // the ItemsController $scope gets destroyed. The
+        // destruction of the ItemsController scope does not
+        // guarantee the stopping of any intervals, you must
+        // be responsible for stopping it when the scope is
+        // is destroyed.
+        $scope.$on('$destroy', function () {
+            stopCounter();
+        });
+        //////////////
+        initConstants();
+
+
+        /**
+         * Functions implementation
+         */
+        function watcherVolume(newVolume) {
+            if (vm.songFile !== undefined) {
+                vm.songFile.volume = pizzicatoFilterService.scale(newVolume);
             }
-            function wathcerFiltersApplied(newFilterAttr) {
-                newFilterAttr.forEach(function (element, index) {
-                    element.props.forEach(function (property) {
-                        vm.songFile.effects[index][property.name] = parseFloat(property.defaults);
-                    });
-                });
-            }
+        }
+        function watcherFiltersApplied(newFilterAttr) {
+            pizzicatoFilterService.applyNewValues(newFilterAttr, vm.songFile);
+        }
 
-            function togglePlay() {
-
-                if (vm.playStatus) {
-                    vm.songFile.play();
+        function togglePlay() {
+            if (vm.playStatus) {
+                if (vm.songFile == null) {
+                    loadSong();
+                    
                 } else {
-                    vm.songFile.pause();
+                    vm.songFile.play();
+                    vm.startCounter();
+                    vm.state = 'running';
                 }
-                vm.playStatus = !vm.playStatus;
+            } else {
+                vm.songFile.pause();
+                vm.stopCounter();
+                vm.state = 'paused';
             }
+            vm.playStatus = !vm.playStatus;
+        }
 
-            function stop() {
-                vm.songFile.stop();
-                vm.playStatus = true;
-            }
+        function stop() {
+            vm.songFile.stop();
+            vm.stopCounter();
+            vm.counter = vm.songFile.sourceNode.buffer.duration;
+            vm.state = 'stoped';
+            vm.playStatus = true;
+            vm.progressbar.set(0);
+        }
 
-            function loadSong() {
-                vm.songFile =
-                        new Pizzicato.Sound({
-                            source: 'file',
-                            options: {path: '/songs/nirv.mp3'}
-                        }, function () {
-                            console.log('sound file loaded!');
-                            vm.songFile.play();
-                            vm.songFile.volume = vm.volume / 100;
-                            angular.forEach(vm.filtersApplied, function (singleFilter, index) {
-                                console.log(singleFilter);
-                                var tempFilterClass = new singleFilter.class;
-                                vm.filtersApplied.push(tempFilterClass);
-                                vm.songFile.addEffect(vm.filtersApplied[index]);
-                            });
-
+        function loadSong() {
+            vm.songLoaded = true;
+            vm.progressbar = ngProgressFactory.createInstance();
+            vm.progressbar.start();
+            vm.songFile =
+                    new Pizzicato.Sound({
+                        source: 'file',
+                        options: {path: '/songs/nirv.mp3'}
+                    }, function () {
+                        vm.songFile.play();
+                        console.log("DURATION", vm.songFile.sourceNode.buffer.duration)
+                        vm.counter = vm.songFile.sourceNode.buffer.duration;
+                        vm.startCounter();
+                        vm.state = 'running';
+                        vm.songFile.volume = vm.volume / 100;
+                        angular.forEach(vm.filtersApplied, function (singleFilter, index) {
+                            console.log(singleFilter);
+                            vm.songFile.addEffect(new singleFilter.class());
                         });
-            }
-            function addFilter(filter) {
-                vm.filtersApplied.push(filter);
-                vm.songFile.addEffect(new vm.filtersApplied[vm.filtersApplied.indexOf(filter)].class);
+                        vm.progressbar.complete();
+                        vm.songLoaded = false;
 
-            }
-            function removeFilter(filter) {
-                console.log("REMOVE", filter);
-//                $scope.songFile.removeEffect($scope.filtersApplied[0]);
-            }
+                    });
+        }
+        function addFilter(filter) {
+            pizzicatoFilterService.addFilter(vm, filter);
+        }
+        function removeFilter(index) {
+            pizzicatoFilterService.removeFilter(vm, index);
+        }
+        function initConstants() {
 
-            vm.volume = 65;
-            vm.options = fetchKnobVolumeConstants;
-            fetchFilterConstants.then(function (data) {
+            fetchConstants.pizzicato().then(function (data) {
 
                 vm.filters = data;
-                console.log(vm.filters);
                 vm.filtersApplied = [];
             }, function () {
 
             });
+        }
 
-        });
+    }
+})();

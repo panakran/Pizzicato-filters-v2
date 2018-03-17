@@ -15,7 +15,8 @@
     "d3": "^3.5.10",
     "jquery": "^3.2.1",
     "lodash": "^4.17.4",
-    "pizzicato": "^0.6.1"
+    "ngprogress": "^1.1.1",
+    "pizzicato": "^0.6.3"
   },
   "devDependencies": {
     "browser-sync": "^2.18.13"

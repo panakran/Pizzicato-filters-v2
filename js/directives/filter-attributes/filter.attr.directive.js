@@ -13,10 +13,14 @@
             bindToController: true,
             restrict: 'E',
             scope: {
+                /**
+                 * min, max, name one-way bindings
+                 * defautls two-way bind so we can communicate with parent
+                 */
                 min: '<',
                 max: '<',
                 name: '<',
-                value: '='
+                defaults: '='
             },
             link: linkFunction()
         };
@@ -45,36 +49,33 @@
     /**
      * Controller function
      */
-    filterAttrController.$inject = ['$scope', 'fetchKnobFilterConstants', '$q'];
-    function filterAttrController($scope, fetchKnobFilterConstants, $q) {
+    filterAttrController.$inject = ['$scope', 'fetchConstants'];
+    function filterAttrController($scope, fetchConstants) {
+
         var vm = this;
-        console.log(vm);
-        vm.options = {
-            skin: {
-                type: 'tron'
-            },
-            dynamicOptions: true,
-            size: 200,
-            unit: "",
-            barWidth: 30,
-            trackColor: 'rgba(255,0,0,.1)',
-            prevBarColor: 'rgba(0,0,0,.2)',
-            subText: {
-                enabled: true,
-                text: ''
-            },
-            scale: {
-                enabled: true,
-                type: 'dots',
-                width: 2
-            },
-            displayPrevious: true
-        };
+
+        /**
+         * Ctrl functions
+         */
+        vm.options = fetchConstants.knobFilter();
         vm.init = init;
+
+        /**
+         * Ctrl wathers
+         */
+        $scope.$watch('vm.defaults', watcherDefaults);
+
+        /**
+         * Function implementations
+         */
+        function watcherDefaults(newVal) {
+            vm.default = parseFloat(newVal);
+        }
         function init() {
-            vm.options.min = vm.min;
-            vm.options.max = vm.max;
-            vm.options.step = (vm.max - vm.min) / 100;
+                vm.options.min = vm.min;
+                vm.options.max = vm.max;
+            vm.options.defaults = parseFloat(vm.defaults);
+            vm.options.step = (vm.max - vm.min > 0 ? vm.max - vm.min : vm.min - vm.max) / 100;
             vm.options.subText.text = vm.name;
         }
     }

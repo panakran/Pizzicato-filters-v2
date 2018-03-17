@@ -5,6 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" >
+        <link href="./node_modules/ngprogress/ngProgress.css" rel="stylesheet" >
 
         <!--vendors-->
         <script src="./node_modules/angular/angular.js"></script>
@@ -13,26 +14,34 @@
         <script src="./node_modules/pizzicato/distr/Pizzicato.js"></script>
         <script src="./node_modules/bootstrap/dist/js/bootstrap.js" ></script>
         <script src="./node_modules/d3/d3.js"></script>
+        <script src="./node_modules/ngprogress/build/ngProgress.js"></script>
 
         <script src="ng-knob.js" ></script>
 
         <script src="./js/main-module.js" ></script>
         <script src="./js/services/common-services.js" ></script>
+        <script src="./js/services/common-filters.js" ></script>
         <script src="./js/directives/filter/filter.directive.js" ></script>
         <script src="./js/directives/filter-attributes/filter.attr.directive.js" ></script>
     </head>
     <body ng-app="MainModule">
-        <div ng-controller="MainModuleCtrl as vm">
-            <div class=" row">
-                <div class="btn-group">
-                    <button type="button" class="btn btn-primary" ng-click="vm.stop()"><span class="glyphicon glyphicon-stop"></span></button>
-                    <button class="btn btn-primary" ng-click="vm.togglePlay()"><span class="" ng-class="{'glyphicon glyphicon-play': vm.playStatus , 'glyphicon glyphicon-pause': !vm.playStatus} "></span></button>
-                    <button type="button" ng-repeat="filter in vm.filters" class="btn btn-primary" ng-click="vm.addFilter(filter)">{{filter.name| lowercase}}</button>
+        <div class="container" ng-controller="MainModuleCtrl as vm">
+            <h1>Pizzicato filters created with ng-knob
+            </h1>
+            <div class="row">
+                <div class="btn-group col-lg-12">
+                    <button type="button" ng-disabled="vm.songLoaded" class="btn btn-primary" ng-click="vm.stop()"><span class="glyphicon glyphicon-stop"></span></button>
+                    <button ng-disabled="vm.songLoaded" class="btn btn-primary" ng-click="vm.togglePlay()"><span class="" ng-class="{'glyphicon glyphicon-play': vm.playStatus , 'glyphicon glyphicon-pause': !vm.playStatus} "></span></button>
+                    <button ng-disabled="vm.songLoaded" type="button" ng-repeat="filter in vm.filters" class="btn btn-primary" ng-click="vm.addFilter(filter)">{{filter.name}}</button>
                 </div>
             </div>
-            <button ng-click="vm.loadSong()">load song</button>
-            <ui-knob value="vm.volume" options="vm.options"></ui-knob>
-            <filter ng-repeat="filterToApply in vm.filtersApplied" filter-data="filterToApply" remove="vm.removeFilter(d)">
+            <h2 ng-if="vm.state!=='stoped' && vm.counter">
+                {{vm.counter| secondsToDateTime | date:'mm:ss'}} - {{vm.state}}
+            </h2>
+            <div class="well-lg">
+                <ui-knob value="vm.volume" options="vm.options"></ui-knob>
+            </div>
+            <filter ng-repeat="filterToApply in vm.filtersApplied track by $index" filter-data="filterToApply" remove="vm.removeFilter($index)">
             </filter>
         </div>
     </body>

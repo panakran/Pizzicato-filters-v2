@@ -4,7 +4,7 @@
     angular.module('filterModule', []).
             directive('filter', filter).
             controller('filterController', filterController);
-
+    
     function filter() {
         return{
             templateUrl: './js/directives/filter/filter.template.html',
@@ -12,7 +12,7 @@
             controllerAs: "vmController",
             bindToController: true,
             restrict: 'E',
-            scope: {filterData: '=', remove:'='},
+            scope: {filterData: '=', remove: '&'},
             link: linkFunction()
         };
     }
@@ -39,11 +39,7 @@
     /**
      * Controller function
      */
-    filterController.$inject = ['$scope', 'fetchKnobFilterConstants'];
-    function filterController($scope, fetchKnobFilterConstants) {
-        var vm = this;
-        console.log('vm::',vm);
-        
+    function filterController() {
     }
 
 })();
