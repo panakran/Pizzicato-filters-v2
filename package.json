@@ -5,8 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "browser-sync start --server  --files",
-    "start-webpack-dev": "webpack-dev-server"
+    "start:dev": "webpack-dev-server"
   },
   "author": "panakran",
   "license": "ISC",
@@ -24,7 +23,6 @@
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.2",
     "babel-preset-env": "^1.6.1",
-    "browser-sync": "^2.23.6",
     "copy-webpack-plugin": "^4.4.1",
     "css-loader": "^0.28.9",
     "file-loader": "^1.1.6",
