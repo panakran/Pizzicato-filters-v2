@@ -1,13 +1,13 @@
 (function () {
     'use strict';
-
+    var template = require('raw-loader!./filter.attr.template.html');
     angular.module('filterAttrModule', []).
             directive('filterAttr', filterAttr).
             controller('filterAttrController', filterAttrController);
 
     function filterAttr() {
         return{
-            templateUrl: './js/directives/filter-attributes/filter.attr.template.html',
+            template: template,
             controller: "filterAttrController",
             controllerAs: "vmController",
             bindToController: true,
@@ -72,8 +72,8 @@
             vm.default = parseFloat(newVal);
         }
         function init() {
-                vm.options.min = vm.min;
-                vm.options.max = vm.max;
+            vm.options.min = vm.min;
+            vm.options.max = vm.max;
             vm.options.defaults = parseFloat(vm.defaults);
             vm.options.step = (vm.max - vm.min > 0 ? vm.max - vm.min : vm.min - vm.max) / 100;
             vm.options.subText.text = vm.name;

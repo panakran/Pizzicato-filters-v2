@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <title>App</title>
+        <title>Pizzicato filters</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="./node_modules/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" >
         <link href="./node_modules/ngprogress/ngProgress.css" rel="stylesheet" >
-
-        <!--vendors-->
+<!--
+        vendors
         <script src="./node_modules/angular/angular.js"></script>
         <script src="./node_modules/jquery/dist/jquery.js"></script>
         <script src="./node_modules/lodash/lodash.js"></script>
@@ -15,21 +15,23 @@
         <script src="./node_modules/bootstrap/dist/js/bootstrap.js" ></script>
         <script src="./node_modules/d3/d3.js"></script>
         <script src="./node_modules/ngprogress/build/ngProgress.js"></script>
+        <script src="./node_modules/angular-animate/angular-animate.js"></script>
 
-        <script src="ng-knob.js" ></script>
+        <script src="./lib/ng-knob.js" ></script>
 
         <script src="./js/main-module.js" ></script>
         <script src="./js/services/common-services.js" ></script>
         <script src="./js/services/common-filters.js" ></script>
         <script src="./js/directives/filter/filter.directive.js" ></script>
-        <script src="./js/directives/filter-attributes/filter.attr.directive.js" ></script>
+        <script src="./js/directives/filter-attributes/filter.attr.directive.js" ></script>-->
+<script src="./dist/bundle.js" ></script>
     </head>
     <body ng-app="MainModule">
         <div class="container" ng-controller="MainModuleCtrl as vm">
             <h1>Pizzicato filters created with ng-knob
             </h1>
             <div class="row">
-                <div class="btn-group col-lg-12">
+                <div class="btn-group col-lg-12" id="bar">
                     <button type="button" ng-disabled="vm.songLoaded" class="btn btn-primary" ng-click="vm.stop()"><span class="glyphicon glyphicon-stop"></span></button>
                     <button ng-disabled="vm.songLoaded" class="btn btn-primary" ng-click="vm.togglePlay()"><span class="" ng-class="{'glyphicon glyphicon-play': vm.playStatus , 'glyphicon glyphicon-pause': !vm.playStatus} "></span></button>
                     <button ng-disabled="vm.songLoaded" type="button" ng-repeat="filter in vm.filters" class="btn btn-primary" ng-click="vm.addFilter(filter)">{{filter.name}}</button>

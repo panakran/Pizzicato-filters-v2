@@ -1,10 +1,92 @@
 (function () {
     'use strict';
-
+var Pizzicato = require("Pizzicato");
     angular.module('common-services', []).
             factory('lodash', lodash).
             factory('fetchConstants', fetchConstants).
-            factory('pizzicatoFilterService', pizzicatoFilterService);
+            factory('pizzicatoFilterService', pizzicatoFilterService).
+            factory('playerService', playerService).
+            factory('intervalService', intervalService);
+
+    intervalService.$inject = ['$interval'];
+    function intervalService($interval) {
+        return {
+            startInterval: startInterval,
+            stopInterval: stopInterval
+        };
+        function stopInterval(promise) {
+            $interval.cancel(promise);
+        }
+        function startInterval(model) {
+            return $interval(function () {
+//                        console.log(vm.songFile);
+                model.progressbar.set(
+                        100 - (model.counter / model.songFile.sourceNode.buffer.duration) * 100
+                        );
+                model.counter--;
+            }, 1000);
+        }
+    }
+
+
+    playerService.$inject = ['ngProgressFactory'];
+    function playerService(ngProgressFactory) {
+
+        return {
+            togglePlay: togglePlay,
+            stop:stop
+        };
+
+        function togglePlay(model) {
+                        if (model.playStatus) {
+                if (model.songFile == null) {
+                    loadSong(model);
+
+                } else {
+                    model.songFile.play();
+                    model.startCounter();
+                    model.state = 'running';
+                }
+            } else {
+                model.songFile.pause();
+                model.stopCounter();
+                model.state = 'paused';
+            }
+            model.playStatus = !model.playStatus;
+        }
+        function stop(model) {
+            model.songFile.stop();
+            model.stopCounter();
+            model.counter = model.songFile.sourceNode.buffer.duration;
+            model.state = 'stoped';
+            model.playStatus = true;
+            model.progressbar.set(0);
+        }
+        function loadSong(model) {
+            model.songLoaded = true;
+            model.progressbar = ngProgressFactory.createInstance();
+            model.progressbar.start();
+            model.songFile =
+                    new Pizzicato.Sound({
+                        source: 'file',
+                        options: {path: '/songs/nirv.mp3'}
+                    }, function () {
+                        model.songFile.play();
+                        console.log("DURATION", model.songFile.sourceNode.buffer.duration)
+                        model.counter = model.songFile.sourceNode.buffer.duration;
+                        model.startCounter();
+                        model.state = 'running';
+                        model.songFile.volume = model.volume / 100;
+                        angular.forEach(model.filtersApplied, function (singleFilter, index) {
+                            console.log(singleFilter);
+                            model.songFile.addEffect(new singleFilter.class());
+                        });
+                        model.progressbar.complete();
+                        model.songLoaded = false;
+
+                    });
+        }
+    }
 
     function pizzicatoFilterService() {
         return {
@@ -59,15 +141,16 @@
         function knobFilter() {
             return {
                 size: 200,
-                bgColor: '#2C3E50',
-                trackWidth: 50,
-                barWidth: 30,
+                trackWidth: 30,
+                barWidth: 20,
                 barColor: '#FFAE1A',
-                textColor: '#eee',
+                trackColor: '#2C3E50',
+                textColor: 'black',
                 subText: {
                     enabled: true,
                     text: '',
-                    color: 'white'
+                    color: 'black',
+                    font: 'auto'
                 }
 
             };
@@ -78,12 +161,12 @@
                 subText: {
                     enabled: true,
                     text: 'Volume',
-                    color: 'gray',
+                    color: 'black',
                     font: 'auto'
                 },
-                trackWidth: 50,
-                barWidth: 30,
-                trackColor: '#656D7F',
+                trackWidth: 35,
+                barWidth: 25,
+                trackColor: '#2C3E50',
                 barColor: '#2CC185'
             };
         }

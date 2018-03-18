@@ -1,13 +1,13 @@
 (function () {
     'use strict';
-
+    var template = require('raw-loader!./filter.template.html');
     angular.module('filterModule', []).
             directive('filter', filter).
             controller('filterController', filterController);
-    
+
     function filter() {
         return{
-            templateUrl: './js/directives/filter/filter.template.html',
+            template: template,
             controller: "filterController",
             controllerAs: "vmController",
             bindToController: true,

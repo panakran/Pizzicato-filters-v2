@@ -1,14 +1,12 @@
-<h2 ng-bind="vmController.filterData.name">
-</h2>
 <div class=" row">
-<div ng-class="'col-sm-offset-'+vmController.filterData.props.length*2">
-    <button class="btn btn-danger" ng-click="vmController.remove()">
-        <span class="glyphicon glyphicon-minus"></span>
-    </button>
-</div>
+        <h2 ng-bind="vmController.filterData.name">
+        </h2>
+        <button  class="btn btn-danger" ng-click="vmController.remove()">
+            <span class="glyphicon glyphicon-minus"></span>
+        </button>
 </div>
 <div class=" row">
-    <div class="col-sm-2 " ng-repeat="filter in vmController.filterData.props track by $index">
+    <div class="col-sm-3 " ng-repeat="filter in vmController.filterData.props track by $index">
         <filter-attr max="filter.max" min="filter.min" defaults="filter.defaults" name="filter.name">
         </filter-attr>
     </div>
