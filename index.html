@@ -8,24 +8,15 @@
         <script src="./dist/bundle.js" ></script>
     </head>
     <body ng-app="MainModule">
-        <div class="container" ng-controller="MainModuleCtrl as vm">
+        <div class="container">
             <h1>Pizzicato filters created with ng-knob
             </h1>
-            <div class="row">
-                <div class="btn-group col-lg-12" id="bar">
-                    <button type="button" ng-disabled="vm.songLoaded" class="btn btn-primary" ng-click="vm.stop()"><span class="glyphicon glyphicon-stop"></span></button>
-                    <button ng-disabled="vm.songLoaded" class="btn btn-primary" ng-click="vm.togglePlay()"><span class="" ng-class="{'glyphicon glyphicon-play': vm.playStatus , 'glyphicon glyphicon-pause': !vm.playStatus} "></span></button>
-                    <button ng-disabled="vm.songLoaded" type="button" ng-repeat="filter in vm.filters" class="btn btn-primary" ng-click="vm.addFilter(filter)">{{filter.name}}</button>
-                </div>
-            </div>
-            <h2 ng-if="vm.state !== 'stoped' && vm.counter">
-                {{vm.counter| secondsToDateTime | date:'mm:ss'}} - {{vm.state}}
-            </h2>
-            <div class="well-lg">
-                <ui-knob value="vm.volume" options="vm.options"></ui-knob>
-            </div>
-            <filter ng-repeat="filterToApply in vm.filtersApplied track by $index" filter-data="filterToApply" remove="vm.removeFilter($index)">
-            </filter>
+            <song title="'nirv.mp3'">
+                <filters name="Distortion">
+                </filters>
+                <filters name="Quadrafuzz">
+                </filters>
+            </song>
         </div>
     </body>
 </html>

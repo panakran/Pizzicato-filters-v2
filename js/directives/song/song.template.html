@@ -1,0 +1,15 @@
+<div class="row">
+    <div class="btn-group col-lg-12" id="bar">
+        <button type="button" ng-disabled="vmController.songLoaded" class="btn btn-primary" ng-click="vmController.stop()"><span class="glyphicon glyphicon-stop"></span></button>
+        <button ng-disabled="vmController.songLoaded" class="btn btn-primary" ng-click="vmController.togglePlay()"><span class="" ng-class="{'glyphicon glyphicon-play': vmController.playStatus , 'glyphicon glyphicon-pause': !vmController.playStatus} "></span></button>
+        <button ng-disabled="vmController.songLoaded" type="button" ng-repeat="filter in vmController.filters" class="btn btn-primary" ng-click="vmController.addFilter(filter)">{{filter.name}}</button>
+    </div>
+</div>
+<h2 ng-if="vmController.state !== 'stoped' && vmController.counter">
+    {{vmController.counter| secondsToDateTime | date:'mm:ss'}} - {{vmController.state}}
+</h2>
+<div class="well-lg">
+    <ui-knob value="vmController.volume" options="vmController.options"></ui-knob>
+</div>
+<filter ng-repeat="filterToApply in vmController.filtersApplied track by $index" filter-data="filterToApply" remove="vmController.removeFilter($index)">
+</filter>

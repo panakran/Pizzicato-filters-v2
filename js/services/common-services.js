@@ -1,6 +1,6 @@
 (function () {
     'use strict';
-var Pizzicato = require("Pizzicato");
+    var Pizzicato = require("Pizzicato");
     angular.module('common-services', []).
             factory('lodash', lodash).
             factory('fetchConstants', fetchConstants).
@@ -34,11 +34,11 @@ var Pizzicato = require("Pizzicato");
 
         return {
             togglePlay: togglePlay,
-            stop:stop
+            stop: stop
         };
 
         function togglePlay(model) {
-                        if (model.playStatus) {
+            if (model.playStatus) {
                 if (model.songFile == null) {
                     loadSong(model);
 
@@ -69,10 +69,10 @@ var Pizzicato = require("Pizzicato");
             model.songFile =
                     new Pizzicato.Sound({
                         source: 'file',
-                        options: {path: '/songs/nirv.mp3'}
+                        options: {path: '/songs/' + model.title}
                     }, function () {
                         model.songFile.play();
-                        console.log("DURATION", model.songFile.sourceNode.buffer.duration)
+                        console.log("DURATION", model.filtersApplied);
                         model.counter = model.songFile.sourceNode.buffer.duration;
                         model.startCounter();
                         model.state = 'running';
@@ -93,7 +93,8 @@ var Pizzicato = require("Pizzicato");
             applyNewValues: applyNewValues,
             scale: scale,
             addFilter: addFilter,
-            removeFilter: removeFilter
+            removeFilter: removeFilter,
+            transcludeFilters: transcludeFilters
         };
 
 
@@ -111,6 +112,12 @@ var Pizzicato = require("Pizzicato");
         }
         function scale(volume) {
             return  volume / 100;
+        }
+        function transcludeFilters(vm, value, index) {
+            if (index % 2 === 1) {
+                let name = value.attributes["0"].value;
+                vm.filtersApplied.push(_.find(vm.filters, {name: name}));
+            }
         }
         function applyNewValues(newValues, song) {
             if (song !== undefined) {

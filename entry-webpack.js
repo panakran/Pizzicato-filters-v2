@@ -21,3 +21,4 @@ require("./js/services/common-services.js");
 require("./js/services/common-filters.js");
 require("./js/directives/filter/filter.directive.js");
 require("./js/directives/filter-attributes/filter.attr.directive.js");
+require("./js/directives/song/song.directive.js");
