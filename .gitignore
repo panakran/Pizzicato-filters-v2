@@ -1,2 +1,4 @@
 node_modules
 nbproject
+dist/bundle.js.map
+dist/bundle.min.js.map

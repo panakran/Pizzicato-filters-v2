@@ -1,12 +1,12 @@
 var webpack = require('webpack');
 var path = require('path');
-var fs = require('fs');
-var gracefulFs = require('graceful-fs');
-gracefulFs.gracefulify(fs);
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const entryPath = "./entry-webpack.js";
+
 
 module.exports = {
     context: path.join(__dirname, ''),
-        mode: 'development',
+    mode: 'development',
     module: {
         rules: [
             {
@@ -30,31 +30,26 @@ module.exports = {
                 test: /\.(png|woff|woff2|eot|ttf|svg)$/, //used to load bootstrap extra files used in app
                 loader: 'url-loader?limit=100000'
             }
-//            {
-//                html template loader 
-//                ex. require("./js/bootstrap/bootstrap.html"); on webpack entry
-//                function loadTemplates($templateCache) {  IN DIRECTIVE
-//                    $templateCache.put('bootstrap.html', require('./bootstrap.html'));
-//                }
-//                template: $templateCache.get('bootstrap.html')
-//                test: /\.(html)$/,
-//                use: {
-//                    loader: 'raw-loader'
-//                }
-//            }
         ]
     },
     plugins: [
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery"
+        }),
+        new UglifyJsPlugin({
+            include: /\.min\.js$/
         })
 
     ],
+    entry: {
+        "bundle": entryPath,
+        "bundle.min": entryPath
+    },
 
-    entry: "./entry-webpack.js",
+    devtool: "source-map",
     output: {
         path: __dirname,
-        filename: "./dist/bundle.js"
+        filename: "./dist/[name].js"
     }
 };

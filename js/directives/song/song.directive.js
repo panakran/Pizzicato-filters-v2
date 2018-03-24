@@ -5,12 +5,13 @@ import 'ngprogress/ngProgress.css';
     var template = require('raw-loader!./song.template.html');
     angular.module('SongModule', [
         'ui.knob',
+        'ngProgress',
+        'ngAnimate',
         'common-services',
         'filterModule',
         'filterAttrModule',
-        'ngProgress',
-        'common-filters',
-        'ngAnimate']).
+        'common-filters'
+    ]).
             controller('SongController', SongController).
             directive('song', song);
 
@@ -41,7 +42,6 @@ import 'ngprogress/ngProgress.css';
      * prelinking function
      */
     function preLink(scope, elem, attr, ctrl, transclude) {
-
     }
 
     /**

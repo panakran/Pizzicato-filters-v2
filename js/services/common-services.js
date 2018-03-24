@@ -1,7 +1,7 @@
 (function () {
     'use strict';
     var Pizzicato = require("Pizzicato");
-    angular.module('common-services', []).
+    angular.module('common-services', ['ngProgress']).
             factory('lodash', lodash).
             factory('fetchConstants', fetchConstants).
             factory('pizzicatoFilterService', pizzicatoFilterService).
@@ -19,11 +19,12 @@
         }
         function startInterval(model) {
             return $interval(function () {
-//                        console.log(vm.songFile);
                 model.progressbar.set(
                         100 - (model.counter / model.songFile.sourceNode.buffer.duration) * 100
                         );
-                model.counter--;
+                if (model.counter >= -1) {
+                    model.counter--;
+                }
             }, 1000);
         }
     }
@@ -78,7 +79,6 @@
                         model.state = 'running';
                         model.songFile.volume = model.volume / 100;
                         angular.forEach(model.filtersApplied, function (singleFilter, index) {
-                            console.log(singleFilter);
                             model.songFile.addEffect(new singleFilter.class());
                         });
                         model.progressbar.complete();
@@ -88,7 +88,8 @@
         }
     }
 
-    function pizzicatoFilterService() {
+    pizzicatoFilterService.$inject = ['lodash'];
+    function pizzicatoFilterService(lodash) {
         return {
             applyNewValues: applyNewValues,
             scale: scale,
@@ -116,7 +117,7 @@
         function transcludeFilters(vm, value, index) {
             if (index % 2 === 1) {
                 let name = value.attributes["0"].value;
-                vm.filtersApplied.push(_.find(vm.filters, {name: name}));
+                vm.filtersApplied.push(lodash.find(vm.filters, {name: name}));
             }
         }
         function applyNewValues(newValues, song) {
