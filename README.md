@@ -1,26 +1,26 @@
 # Pizzicato filters using PizzicatoJs and ng-knob directive
 
-## Installation
+### Installation
 
-clone repo
+> clone repository
 
 ```cmd
 git clone https://github.com/panakran/Pizzicato-filters-v2.git
 ```
 
-install app
+> install app
 
 ```cmd
 npm install
 ```
 
-run webpack-dev-server
+> run webpack-dev-server
 
 ```cmd
 npm run start
 ```
 
-use as
+> use as
 
 ```html
 <song title="'myFileNameUnderSongsFolder.mp3'">
